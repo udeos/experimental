@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "bloomfilter/bloomfilter.h"
-#include "bloomfilter/utils.h"
+#include "bloomfilter.h"
+#include "utils.h"
 
 
 void test_bloom(bloom_t *bloom) {
