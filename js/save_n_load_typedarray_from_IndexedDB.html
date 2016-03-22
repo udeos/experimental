@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+
+    // write data into buffer
+    var test_dataset = [1, 2, 3];
+    var buffer = new Uint8Array(test_dataset.length);
+    for (var i = 0; i < test_dataset.length; ++i) {
+        buffer[i] = test_dataset[i];
+    }
+
+    // init reader
+    var reader = new FileReader();
+    reader.onload = function () {
+        var stored_data = new Uint8Array(this.result);
+        for (var i = 0; i < stored_data.length; ++i) {
+            console.log(stored_data[i]);
+        }
+    };
+
+    // save dataset into IndexedDB like blob
+    var open_req = window.indexedDB.open('test_db4', 1);
+    open_req.onsuccess = function (event) {
+        var db = event.target.result;
+        var store = db.transaction(['dataset'], 'readwrite').objectStore('dataset');
+        store.put(new Blob([buffer]), 'test_dataset_1');
+
+        // load dataset from indexedDB and read
+        var read_req = store.get('test_dataset_1');
+        read_req.onsuccess = function (event) {
+            reader.readAsArrayBuffer(event.target.result);
+        };
+    };
+    open_req.onupgradeneeded = function (event) {
+        event.target.result.createObjectStore("dataset");
+    };
+
+
+</script>
+</body>
+</html>
